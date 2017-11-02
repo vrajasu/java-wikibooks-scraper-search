@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adaptive Web Assignment 3</title>	
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" type="text/css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+</head>
+<body>
+	<div id="page">
+		<div id="logo">
+			<h1>Adaptive Web 3</h1>
+		</div>
+		<div id="content">
+			<h2>Content Based Recommendation</h2>
+			<p>
+				Unfortunately Solr shut down! :( Waking up Solr, Scraping pages and indexing the data. Please wait.
+			</p>
+		</div>
+	</div>
+</body>
+<script>
+var ready = function ( fn ) {
+
+    if ( typeof fn !== 'function' ) return;
+    if ( document.readyState === 'complete'  ) {
+        return fn();
+    }
+    document.addEventListener('DOMContentLoaded', fn, false );
+};
+
+ready(function() {
+	var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    // xmlHttp.open("GET", "/startSolr", false);
+    // xmlHttp.send(null);
+    $.get("/startSolr").done(function(result){
+		window.location.href = "/";
+    }).fail(function(xhr,status,error){
+    	window.location.href = "/";
+    });
+    //   
+
+});
+</script>
+</html>

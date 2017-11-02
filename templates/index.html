@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Adaptive Web Assignment 3</title>	
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" type="text/css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js'></script>
+
+</head>
+<body>
+	<div id="page">
+		<div id="logo">
+			<h1>Adaptive Web 3</h1>
+		</div>
+		<h2>Content Based Recommendation</h2>
+		<div id="content">
+			<h3>Implentation Details</h3>
+			<li>Scraping Data - I am scraping data using BeautifulSoup in python. I start with getting all the links from the introduction page and then take text, title, url, html data from all the sections in these pages. On the Solr side I store the text, html, url and title. I also use a special field type called “text_en_splitting” which takes care of stemming and removing stop words before indexing this text data. While querying, I query this field and then return html, text, url and title.</li>
+			</br>
+			</br>
+			<li>Generating a proper query - A query can often have certain stop words which can impede similarity matching. Words like a, the etc are often present in documents. To overcome this I first tokenize the input string, remove all stop words and then apply porter stemming on these words. While passing the query to solr I am passing a string separated by the ‘Or’ keyword. This is done to search uniformly across documents with a proximity. I am doing this using Python’s ntlk library.</li>
+			</br>
+			</br>
+			<li>Showing the data -  After querying the response is shown on the screen. The html that is scraped is now shown in the recommendations section. Extracting the html is important because while displaying it, it provides a pleasant reading experience. The interesting part is seeing how the code sections turn up. However, it should be noted that indexing and querying is done on the text field only.</li>
+			</br>
+			</br>
+			<li>Similarity Measure - BM25 (Best Matching 25) : BM 25 was introduced from SOLR 6 and has taken over VSM as the state of the art approach for faster information retrieval. BM25 is based on probabilistic information retrieval and casts relevance as a probability problem. We are provided with a relevance score based on a probability distribution. According to <a href = 'https://en.wikipedia.org/wiki/Okapi_BM25'>Wikipedia</a> , BM25 is a bag-of-words retrieval function that ranks a set of documents based on the query terms appearing in each document, regardless of the inter-relationship between the query terms within a document (e.g., their relative proximity). It is not a single function, but actually a whole family of scoring functions, with slightly different components and parameters.
+			</br>
+			Studies based on the Vector Space Model which is based on TF*IDF show that raw values of TF-DIF don't match human intuitions of relevance. The IDF score grows more slowly. BM25 saturates the TF score faster to make sure we dont go past the point of diminishing returns.
+			</li>
+			</br>
+			</br>
+		</div>
+		<h2>Pick a question to see the recommendations</h2>
+		<div id="content" name="div1">
+			<h3>Text Type - Question</h3>
+			<p name="1">
+				I was presented with this question in an end of module open book exam today and found myself lost. i was reading Head first Javaand both definitions seemed to be exactly the same. i was just wondering what the MAIN difference was for my own piece of mind. i know there are a number of similar questions to this but, none i have seen which provide a definitive answer.Thanks, Darren
+			</p>
+			<button type="button" id="button1" onclick="getRec(1)">See Recommendations</button>
+		</div>
+		<div id="content" name="div2">
+			<h3>Text Type - Accepted Answer</h3>
+			<p name="2">
+				Inheritance is when a 'class' derives from an existing 'class'.So if you have a Person class, then you have a Student class that extends Person, Student inherits all the things that Person has.There are some details around the access modifiers you put on the fields/methods in Person, but that's the basic idea.For example, if you have a private field on Person, Student won't see it because its private, and private fields are not visible to subclasses.Polymorphism deals with how the program decides which methods it should use, depending on what type of thing it has.If you have a Person, which has a read method, and you have a Student which extends Person, which has its own implementation of read, which method gets called is determined for you by the runtime, depending if you have a Person or a Student.It gets a bit tricky, but if you do something likePerson p = new Student();p.read();the read method on Student gets called.Thats the polymorphism in action.You can do that assignment because a Student is a Person, but the runtime is smart enough to know that the actual type of p is Student.Note that details differ among languages.You can do inheritance in javascript for example, but its completely different than the way it works in Java.
+			</p>
+			<button type="button" id="button2" onclick="getRec(2)">See Recommendations</button>
+		</div>
+		<div id="content" name="div3">
+			<h3>Text Type - Answer</h3>
+			<p name="3">
+				Polymorphism: The ability to treat objects of different types in a similar manner.Example: Giraffe and Crocodile are both Animals, and animals can Move.If you have an instance of an Animal then you can call Move without knowing or caring what type of animal it is.Inheritance: This is one way of achieving both Polymorphism and code reuse at the same time.Other forms of polymorphism:There are other way of achieving polymorphism, such as interfaces, which provide only polymorphism but no code reuse (sometimes the code is quite different, such as Move for a Snake would be quite different from Move for a Dog, in which case an Interface would be the better polymorphic choice in this case.In other dynamic languages polymorphism can be achieved with Duck Typing, which is the classes don't even need to share the same base class or interface, they just need a method with the same name.Or even more dynamic like Javascript, you don't even need classes at all, just an object with the same method name can be used polymorphically.
+			</p>
+			<button type="button" id="button3" onclick="getRec(3)">See Recommendations</button>
+		</div>
+		<div id="content" name="div4">
+			<h3>Text Type - Question</h3>
+			<p name="4">
+				I found out that the above piece of code is perfectly legal in Java. I have the following questions. ThanksAdded one more question regarding Abstract method classes.
+				<br/><br/><br/>
+				<code>
+				<pre>
+				public class TestClass
+				{
+					public static void main(String[] args) 
+					{
+						TestClass t = new TestClass();
+					}
+					private static void testMethod()
+					{
+						abstract class TestMethod
+						{
+							int a;
+							int b;
+							int c;
+							abstract void implementMe();
+						}
+						class DummyClass extends TestMethod
+						{
+							void implementMe(){}
+						}
+						DummyClass dummy = new DummyClass();
+					}
+				}	
+				</pre>
+				</code>
+			</p>
+			<button type="button" id="button4" onclick="getRec(4)">See Recommendations</button>
+		</div>
+		<div id="content" name="div5">
+			<h3>Text Type - Question</h3>
+			<p name="5">
+				In java it's a bit difficult to implement a deep object copy function. What steps you take to ensure the original object and the cloned one share no reference? 
+			</p>
+			<button type="button" id="button5" onclick="getRec(5)">See Recommendations</button>
+		</div>
+		<div id="content" name="div6">
+			<h3>Text Type - Answer</h3>
+			<p name="6">
+				You can make a deep copy serialization without creating some files. Copy: Restore:
+				<br/><br/><br/>
+				<code>
+				<pre>
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(bos);
+				oos.writeObject(object);
+				oos.flush();
+				oos.close();
+				bos.close();
+				byte[] byteData = bos.toByteArray();
+				ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
+				(Object) object = (Object) new ObjectInputStream(bais).readObject();
+				</pre>
+				</code>
+			</p>
+			<button type="button" id="button6" onclick="getRec(6)">See Recommendations</button>
+		</div>
+		<div id="content" name="div7">
+			<h3>Text Type - Answer</h3>
+			<p name="7">
+				Java has the ability to create classes at runtime. These classes are known as Synthetic Classes or Dynamic Proxies. See for more information. Other open-source libraries, such as and also allow you to generate synthetic classes, and are more powerful than the libraries provided with the JRE. Synthetic classes are used by AOP (Aspect Oriented Programming) libraries such as Spring AOP and AspectJ, as well as ORM libraries such as Hibernate. 
+			</p>
+			<button type="button" id="button7" onclick="getRec(7)">See Recommendations</button>
+		</div>
+		<div id="content" name="div8">
+			<h3>Text Type - Accepted Answer</h3>
+			<p name ="8">
+				A safe way is to serialize the object, then deserialize.This ensures everything is a brand new reference.about how to do this efficiently. Caveats: It's possible for classes to override serialization such that new instances are created, e.g. for singletons.Also this of course doesn't work if your classes aren't Serializable.
+			</p>
+			<button type="button" id="button8" onclick="getRec(8)">See Recommendations</button>
+		</div>
+		<div id="content" name="div9">
+			<h3>Text Type - Answer</h3>
+			<p name="9">
+				comment this code
+				<br/><br/><br/>
+				<code>
+				<pre>
+				/*if (savedinstancestate == null) 
+				{     
+					getsupportfragmentmanager().begintransaction().add(r.id.container  new placeholderfragment()).commit(); 
+				}*/  
+				</pre>
+				</code>
+			</p>
+			<button type="button" id="button9" onclick="getRec(9)">See Recommendations</button>
+		</div>
+		<div id="content" name="div10">
+			<h3>Text Type - Question</h3>
+			<p name="10">
+				in a class i can have as many constructors as i want with different argument types. i made all the constructors as private it didn't give any error because my implicit default constructor was public but when i declared my implicit default constructor as private then its showing an error while extending the class.  why?       this works fine         this can not be inherited       	
+				<br/><br/><br/>
+				<code>
+				<pre>
+				public class demo4
+				  {     
+				  private string name;     
+				  private int age;     
+				  private double sal;      
+
+				  private demo4(string name  int age) 
+				  {         
+				  	this.name=name;         
+				  	this.age=age;        
+				  }      
+				  demo4(string name) 
+				  {         
+				  	this.name=name;     
+				  }      
+				  demo4() 
+				  {         
+				  	this(\"unknown\"  20);         
+				  	this.sal=2000;     
+				  }      
+				  void show()
+				  {         
+				  	system.out.println(\"name\"+name);         
+				  	system.out.println(\"age: \"+age);     
+				  }
+				  }
+				  public class demo4
+				  {     
+				  private string name;     
+				  private int age;     
+				  private double sal;      
+
+				  private demo4(string name  int age) 
+				  {         
+				  	this.name=name;         
+				  	this.age=age;        
+				  }      
+				  demo4(string name) 
+				  {         
+				  	this.name=name;     
+				  }      
+				  demo4() 
+				  {         
+				  	this(\"unknown\"  20);         
+				  	this.sal=2000;     
+				  }      
+				  void show()
+				  {         
+				  	system.out.println(\"name\"+name);         
+				  	system.out.println(\"age: \"+age);     
+				  }
+				  }  
+
+				</pre>
+				</code>    
+			</p>
+			<button type="button" id="button10" onclick="getRec(10)">See Recommendations</button>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	var isLoaded = [false,false,false,false,false,false,false,false,false,false]
+	var count=1000;
+	function getRec(rid){
+		console.log("Here");
+		// rtext = $('p[name="'+rid+'"]').text()
+		// console.log(rtext);
+		if(!isLoaded[rid-1]){
+			$.post("/getRec", {id: rid}, function(result){
+				console.log(result)
+				var numResults = result.length;
+				isLoaded[rid-1]=true;
+				for(i=0;i<numResults;i++)
+				{
+					var res = result[i];
+					var id =res.id;
+					var title = res.title;
+					var url =res.url;
+					var text = res.htmlContent;
+
+					var htmlAppend = "<h3>Recommendation #"+(i+1)+"</h3><h3>Title - "+title+"</h3><h3><a target='_blank' href ='"+url+"' >"+url+"</a></h3><div name='"+count+"'>"+text+"</div><button type='button' name='"+count+"' onclick='showHide("+count+")'>Expand</button><br></br><hr/>"
+					$('div[name="div'+rid+'"]').append(htmlAppend);
+					$('div[name="'+count+'"]').hide()
+
+
+					count++;
+				}
+
+			});
+		}
+
+	}
+	function showHide(id){
+		$('div[name="'+id+'"]').toggle()
+
+		var buttonText = $('button[name="'+id+'"]').text()
+		if(buttonText === 'Expand')
+			$('button[name="'+id+'"]').html("Collapse");
+		else
+			$('button[name="'+id+'"]').html("Expand");
+
+	}
+</script>
+
+</html>
